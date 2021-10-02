@@ -139,16 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\lab3\Laba_ChM3\MatrixOperation.cpp" />
     <ClCompile Include="lab3_IterMethods.cpp" />
+    <ClCompile Include="MatrixOperation.cpp" />
+    <ClCompile Include="VectorsOperation.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\lab3\Laba_ChM3\MatrixOperation.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </DeploymentContent>
-    </ClInclude>
+    <ClInclude Include="MatrixOperation.h" />
+    <ClInclude Include="VectorsOperation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

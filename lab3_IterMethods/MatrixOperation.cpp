@@ -1,6 +1,5 @@
 #include "MatrixOperation.h"
 
-const double eps = 0.00000000001;
 std::vector<std::vector<double>> Transpose(std::vector<std::vector<double>> a)
 {
     std::vector<std::vector<double>> res(a.size(), (std::vector<double>(a[0].size())));
@@ -150,3 +149,25 @@ double EuclideanNorm(std::vector<std::vector<double>> A)
 
     return sqrt(max);
 }
+
+std::vector<std::vector<double>> SubtractionMatrix(std::vector<std::vector<double>> a, std::vector<std::vector<double>> b)
+{
+    std::vector<std::vector<double>> res(a.size(), (std::vector<double>(a.size())));
+
+    for (int i = 0; i < res.size(); ++i)
+        for (int j = 0; j < res.size(); ++j)
+            res[i][j] = a[i][j] - b[i][j];
+
+    return res;
+}
+
+std::vector<double> SubtractionVector(std::vector<double> a, std::vector<double> b)
+{
+    std::vector<double> res(a.size());
+
+    for (int i = 0; i < res.size(); ++i)
+        res[i] = a[i] - b[i];
+
+    return res;
+}
+

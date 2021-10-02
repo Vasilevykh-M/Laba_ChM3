@@ -18,12 +18,18 @@
     <ClCompile Include="lab3_IterMethods.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\lab3\Laba_ChM3\MatrixOperation.cpp">
+    <ClCompile Include="MatrixOperation.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorsOperation.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\lab3\Laba_ChM3\MatrixOperation.h">
+    <ClInclude Include="MatrixOperation.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorsOperation.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
