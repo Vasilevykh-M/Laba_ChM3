@@ -159,3 +159,41 @@ std::vector<std::vector<double>> SubtractionMatrix(std::vector<std::vector<doubl
 
     return res;
 }
+
+double cubic_norm(std::vector<std::vector<double>> mass)
+{
+    double max = LONG_MIN;
+    double summ = 0;
+
+    for (int i = 0; i < mass.size(); i++)
+    {
+        for (int j = 0; j < mass[i].size(); j++)
+        {
+            summ += abs(mass[i][j]);
+        }
+
+        if (summ - max > eps)
+            max = summ;
+
+        summ = 0;
+    }
+
+    return max;
+}
+
+double octahedral_norm(std::vector<std::vector<double>> mass)
+{
+    double max = LONG_MIN;
+    double summ = 0;
+
+    for (int i = 0; i < mass[0].size(); i++)
+    {
+        for (int j = 0; j < mass.size(); j++)
+        {
+            summ += abs(mass[j][i]);
+        }
+        if (summ - max > eps) max = summ;
+        summ = 0;
+    }
+    return max;
+}
