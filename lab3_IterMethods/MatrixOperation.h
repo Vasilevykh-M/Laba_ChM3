@@ -8,4 +8,3 @@ std::vector<std::vector<double>> MultMatrix(std::vector<std::vector<double>>, st
 std::vector<double> MultMatrixVector(std::vector<std::vector<double>>, std::vector<double>);
 double EuclideanNorm(std::vector<std::vector<double>>);
 std::vector<std::vector<double>> SubtractionMatrix(std::vector<std::vector<double>>, std::vector<std::vector<double>>);
-std::vector<double> SubtractionVector(std::vector<double>, std::vector<double>);

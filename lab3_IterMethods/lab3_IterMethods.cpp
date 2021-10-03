@@ -3,6 +3,40 @@
 
 #include <iostream>
 #include "MatrixOperation.h"
+#include "VectorsOperation.h"
+
+using namespace std;
+
+double tau(vector<vector<double>> a)
+{
+	double y = 0.9;
+	return 2 * y / EuclideanNorm(a);
+}
+
+double qCalc(vector<double> xPrev, vector<double> xCur, vector<double> xNext)
+{
+	return ThirdVectorNorm(SubtractionVector(xNext, xCur)) / ThirdVectorNorm(SubtractionVector(xCur,xPrev)); //Как тебе F#-way?
+}
+
+double Pogreshnost(vector<double> xCur, vector<double> xNext)
+{
+	vector<double> x = SubtractionVector(xNext, xCur);
+	return min(ThirdVectorNorm(x), min(SecondVectorNorm(x), FirstVectorNorm(x))); //Мне очень нравится композиция функций в ФП
+}
+
+vector<double> vectorNevyazki(vector<vector<double>> a, vector<double> x, vector<double> b)
+{
+	vector<double> n(b.size());
+
+	for (int i = 0; i < a.size(); ++i)
+	{
+		for (int j = 0; j < a[i].size(); ++j)
+			n[i] += a[i][j] * x[i];
+		n[i] -= b[i];
+	}
+
+	return n;
+}
 
 int main()
 {

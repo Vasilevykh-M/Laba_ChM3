@@ -79,7 +79,6 @@ double summ(std::vector<std::vector<double>> A)
     return sum;
 }
 
-
 double EuclideanNorm(std::vector<std::vector<double>> A)
 {
     int x, y;
@@ -160,14 +159,3 @@ std::vector<std::vector<double>> SubtractionMatrix(std::vector<std::vector<doubl
 
     return res;
 }
-
-std::vector<double> SubtractionVector(std::vector<double> a, std::vector<double> b)
-{
-    std::vector<double> res(a.size());
-
-    for (int i = 0; i < res.size(); ++i)
-        res[i] = a[i] - b[i];
-
-    return res;
-}
-
