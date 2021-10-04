@@ -6,6 +6,7 @@
 #include "VectorsOperation.h"
 #include <iomanip>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ double qCalc(vector<double> xPrev, vector<double> xCur, vector<double> xNext)
 	return FirstVectorNorm(SubtractionVector(xNext, xCur)) / FirstVectorNorm(SubtractionVector(xCur,xPrev)); //Как тебе F#-way?
 }
 
-double Pogreshnost(vector<double> xCur, vector<double> xNext)
+double PogreshnostNorm(vector<double> xCur, vector<double> xNext)
 {
 	return  FirstVectorNorm(SubtractionVector(xNext, xCur)); //Мне очень нравится композиция функций в ФП
 }
@@ -41,6 +42,63 @@ vector<double> vectorNevyazki(vector<vector<double>> a, vector<double> x, vector
 	return n;
 }
 
+vector<double> sqrtMethod(vector<vector<double>> a, vector<double> b)
+{
+	vector<vector<double>> S(a.size(), (vector<double>(a.size())));
+	vector<vector<double>> d(a.size(),(vector<double>(b.size())));
+
+
+	for(int i=0;i<S.size();++i)
+	{
+		double sum = 0;
+
+		for (int k = 0; k < i; ++k)
+			sum += S[k][i] * S[k][i]*d[k][k];
+
+		d[i][i] = copysign(1.0, a[i][i] - sum);
+		S[i][i] = sqrt(a[i][i] - sum);
+
+		double temp = 1 / (S[i][i] * d[i][i]);
+
+		for(int j=i+1;j<S.size();++j)
+		{
+			sum = 0;
+
+			for (int k = 0; k < i; ++k)
+				sum += S[k][i] * S[k][j]*d[k][k];
+
+			S[i][j] = (a[i][j] - sum) *temp;
+		}
+
+	}
+
+	vector<double> y(b.size());
+	vector<double> x(b.size());
+
+	y[0] = b[0] / (S[0][0]*d[0][0]);
+
+	for (int i = 1; i < b.size(); ++i)
+	{
+		double sum = 0;
+		for (int j = 0; j < i; ++j)
+			sum += S[j][i] * y[j]*d[j][j];
+
+		y[i] = (b[i] - sum) / (S[i][i]*d[i][i]);
+	}
+
+	x[b.size() - 1] = y[b.size() - 1] / S[b.size() - 1][b.size() - 1];
+
+	for (int i = x.size() - 2; i > -1; --i)
+	{
+		double sum = 0;
+		for (int j = i; j<x.size(); ++j)
+			sum += S[i][j] * x[j];
+
+		x[i] = (y[i] - sum) / S[i][i];
+	}
+
+	return x;
+}
 
 
 void simpleIteration(vector<vector<double>> a, vector<double> b)
@@ -51,24 +109,27 @@ void simpleIteration(vector<vector<double>> a, vector<double> b)
 	vector<double> nev;
 	double nevNorm=1, tau=tauCalc(a), q=0, pogr=0;
 
-	for(int i=1;nevNorm>epsylon;++i)
+	for(int k=1;nevNorm>epsylon;++k)
 	{
-		for(int j=0;j<a.size();++j)
+		for(int i=0;i<a.size();++i)
 		{
 			double sum = 0;
-			for (int k = 0; k < a[j].size(); ++k)
-				sum += a[j][k] * xCur[k];
-			xNext[j] = xCur[j] + tau * (b[j] - sum);
+			for (int j = 0; j < a[i].size(); ++j)
+				sum += a[i][j] * xCur[j];
+			xNext[i] = xCur[i] + tau * (b[i] - sum);
 		}
+
 
 		nev = vectorNevyazki(a, xCur, b);
 		nevNorm = FirstVectorNorm(nev);
-		q =(i==0)?FirstVectorNorm(xNext):qCalc(xPrev, xCur, xNext);
-		pogr = Pogreshnost(xCur, xNext);
+		q =(k==0)?FirstVectorNorm(xNext):qCalc(xPrev, xCur, xNext);
+		pogr = PogreshnostNorm(xCur, xNext);
 		cout << setprecision(4) << tau << " | " << q << " | " << setprecision(8) << nevNorm << " | " << pogr  << endl;
 
 		xPrev = xCur;
 		xCur = xNext;
+
+		
 	}
 }
 
@@ -91,8 +152,14 @@ int main()
 			cout << a[i][j] << " ";
 		cout << endl;
 	}
+	cout<<endl;
 
 	simpleIteration(a, b);
+	vector<double> x = sqrtMethod(a, b);
+
+	for (int i = 0; i < x.size(); ++i)
+		cout << x[i] << endl;
+
 
 }
 
