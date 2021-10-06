@@ -12,7 +12,7 @@ std::vector<double> SubtractionVector(std::vector<double> a, std::vector<double>
 
 double FirstVectorNorm(std::vector<double> a)
 {
-	return *std::max_element(a.begin(), a.end());
+	return abs(*std::max_element(a.begin(), a.end(), [](double x, double y) {return abs(x) < abs(y); }));
 }
 
 double SecondVectorNorm(std::vector<double> a)
@@ -20,7 +20,7 @@ double SecondVectorNorm(std::vector<double> a)
 	double sum = 0;
 
 	for (int i = 0; i < a.size(); ++i)
-		sum += a[i];
+		sum += std::abs(a[i]);
 
 	return sum;
 }

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-const double epsylon = 0.0001;
+const double epsylon = 0.001;
 
 double tauCalc(vector<vector<double>> a)
 {
@@ -23,9 +23,9 @@ double qCalc(vector<double> xPrev, vector<double> xCur, vector<double> xNext)
 	return FirstVectorNorm(SubtractionVector(xNext, xCur)) / FirstVectorNorm(SubtractionVector(xCur,xPrev)); //Как тебе F#-way?
 }
 
-double PogreshnostNorm(vector<double> xCur, vector<double> xNext)
+double Pogreshnost(vector<double> xCur, vector<double> xNext, double q)
 {
-	return  FirstVectorNorm(SubtractionVector(xNext, xCur)); //Мне очень нравится композиция функций в ФП
+	return  q*FirstVectorNorm(SubtractionVector(xNext, xCur))/(1-q); //Мне очень нравится композиция функций в ФП
 }
 
 vector<double> vectorNevyazki(vector<vector<double>> a, vector<double> x, vector<double> b)
@@ -101,15 +101,15 @@ vector<double> sqrtMethod(vector<vector<double>> a, vector<double> b)
 }
 
 
-void simpleIteration(vector<vector<double>> a, vector<double> b)
+void simpleIteration(vector<vector<double>> a, vector<double> b,vector<double> SolvedX)
 {
 	vector<double> xPrev(4,0);
 	vector<double> xCur=b;
 	vector<double> xNext(4);
 	vector<double> nev;
-	double nevNorm=1, tau=tauCalc(a), q=0, pogr=0;
+	double nevNorm, tau=tauCalc(a), q=0, pogr=1;
 
-	for(int k=1;nevNorm>epsylon;++k)
+	for(int k=1;abs(pogr)-epsylon>0;++k)
 	{
 		for(int i=0;i<a.size();++i)
 		{
@@ -122,9 +122,10 @@ void simpleIteration(vector<vector<double>> a, vector<double> b)
 
 		nev = vectorNevyazki(a, xCur, b);
 		nevNorm = FirstVectorNorm(nev);
-		q =(k==0)?FirstVectorNorm(xNext):qCalc(xPrev, xCur, xNext);
-		pogr = PogreshnostNorm(xCur, xNext);
-		cout << setprecision(4) << tau << " | " << q << " | " << setprecision(8) << nevNorm << " | " << pogr  << endl;
+		q =(k==1)?FirstVectorNorm(SubtractionVector(xCur,xNext)):qCalc(xPrev, xCur, xNext);
+		pogr = Pogreshnost(xCur, xNext,q);
+		double pogrNorm = FirstVectorNorm(SubtractionVector(xNext, SolvedX));
+		cout <<k<<" | " << setprecision(3) << tau << " | " << q << " | " << setprecision(7) << nevNorm << " | " << pogrNorm<<" | " << pogr << endl;
 
 		xPrev = xCur;
 		xCur = xNext;
@@ -154,8 +155,9 @@ int main()
 	}
 	cout<<endl;
 
-	simpleIteration(a, b);
+	
 	vector<double> x = sqrtMethod(a, b);
+	simpleIteration(a, b,x);
 
 	for (int i = 0; i < x.size(); ++i)
 		cout << x[i] << endl;
