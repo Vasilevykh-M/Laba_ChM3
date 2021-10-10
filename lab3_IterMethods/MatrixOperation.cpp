@@ -197,3 +197,50 @@ double octahedral_norm(std::vector<std::vector<double>> mass)
     }
     return max;
 }
+
+std::vector<std::vector<double>> ReverseMatrix(std::vector<std::vector<double>> a)
+{
+    std::vector<std::vector<double>> e(a.size(), (std::vector<double>(a.size())));
+    std::vector<std::vector<double>> RevA = a;
+
+    for (int i = 0; i < e.size(); ++i)
+        e[i][i] = 1;
+
+    for(int k=0;k<a.size();++k)
+    {
+        double temp = RevA[k][k];
+
+        for(int j=0;j<a.size();++j)
+        {
+            RevA[k][j] /= temp;
+            e[k][j] /= temp;
+        }
+
+        for(int i=k+1;i<a.size();++i)
+        {
+            temp = RevA[i][k];
+
+            for(int j=0;j<a.size();++j)
+            {
+                RevA[i][j] -= RevA[k][j] * temp;
+                e[i][j] -= e[k][j] * temp;
+            }
+        }
+    }
+
+    for(int k=a.size()-1;k>0;--k)
+    {
+	    for(int i=k-1;i>-1;--i)
+	    {
+            double temp = RevA[i][k];
+            for(int j=0;j<a.size();++j)
+            {
+                RevA[i][j] -= RevA[k][j] * temp;
+                e[i][j] -= e[k][j] * temp;
+            }
+	    }
+    }
+
+    return e;
+}
+

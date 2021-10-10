@@ -10,3 +10,4 @@ double EuclideanNorm(std::vector<std::vector<double>>);
 std::vector<std::vector<double>> SubtractionMatrix(std::vector<std::vector<double>>, std::vector<std::vector<double>>);
 double cubic_norm(std::vector<std::vector<double>>);
 double octahedral_norm(std::vector<std::vector<double>>);
+std::vector<std::vector<double>> ReverseMatrix(std::vector<std::vector<double>>);
