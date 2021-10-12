@@ -11,6 +11,7 @@
 using namespace std;
 
 const double epsylon = 0.0001;
+ofstream fout("output.txt");
 
 double tauCalc(vector<vector<double>> a)
 {
@@ -102,6 +103,11 @@ vector<double> sqrtMethod(vector<vector<double>> a, vector<double> b)
 
 void simpleIteration(vector<vector<double>> a, vector<double> b,vector<double> SolvedX)
 {
+	fout << "Метод простых итераций" << endl;
+	fout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12) << "Норма r|"
+		<< setw(12) << "Норма погр|" << setw(12) << "Оценка погр|"
+		<< setw(8) << "X[0]" << setw(8) << "X[1]" << setw(8) << "X[2]" << setw(8) << "X[3]" << endl;
+
 	vector<double> xPrev(4,0);
 	vector<double> xCur=b;
 	vector<double> xNext(4);
@@ -109,7 +115,7 @@ void simpleIteration(vector<vector<double>> a, vector<double> b,vector<double> S
 	double nevNorm, tau=tauCalc(a), q=0, pogr=1;
 	double pogrNorm = 1;
 
-	for(int k=1;abs(pogrNorm)-epsylon>0;++k)
+	for(int k=1; FirstVectorNorm(SubtractionVector(xCur, SolvedX)) / FirstVectorNorm(xCur) > epsylon;++k)
 	{
 		for(int i=0;i<a.size();++i)
 		{
@@ -125,7 +131,12 @@ void simpleIteration(vector<vector<double>> a, vector<double> b,vector<double> S
 		q =(k==1)?FirstVectorNorm(SubtractionVector(xCur,xNext)):qCalc(xPrev, xCur, xNext);
 		pogr = Pogreshnost(xCur, xNext,q);
 		pogrNorm = FirstVectorNorm(SubtractionVector(xNext, SolvedX));
-		cout <<k<<" | " << setprecision(4) << tau <<setprecision(3) <<" | " << q << " | " <<setw(10) <<setprecision(7) << nevNorm << " | " << pogrNorm<<" | " << pogr << endl;
+		fout<<setw(4)<<k<<"|" <<fixed<< setprecision(4) << tau <<" | " <<setprecision(3)<< q
+		<< " |" <<setw(10) <<setprecision(7) << nevNorm << " |"<<setw(10)<< pogrNorm<<" |" <<setw(10)<< pogr << " | ";
+
+		for (int i = 0; i < b.size(); ++i)
+			fout << setw(8) << fixed << setprecision(5) << xNext[i];
+		fout << endl;
 
 		xPrev = xCur;
 		xCur = xNext;
@@ -137,11 +148,10 @@ void simpleIteration(vector<vector<double>> a, vector<double> b,vector<double> S
 void fast_gardient(vector<vector<double>> A, vector<double> b,vector<double> X_q) //	Ìåòîä ñêîðåéøåãî ñïóñêà
 {
 
-	cout << "Ìåòîä íàèñêîðåéøåãî ñïóñêà" << endl;
-	cout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12)
-		<< "Íîðìà r|" << setw(12) << "Íîðìà ïîãð|" << setw(12) << "Îöåíêà ïîãð|"
+	fout << "Метод наискорейшего спуска" << endl;
+	fout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12)
+		<< "Норма r|" << setw(12) << "Норма погр|" << setw(12) << "Оценка погр|"
 		<< setw(8) << "X[0]" << setw(8) << "X[1]" << setw(8) << "X[2]" << setw(8) << "X[3]" << endl;
-
 
 	vector<double> X(A.size()); // X[k+1]
 	vector<double> X_pred(A.size()); // X[k]
@@ -174,14 +184,14 @@ void fast_gardient(vector<vector<double>> A, vector<double> b,vector<double> X_q
 		X_prpr = X_pred;
 		X_pred = X;
 
-		cout << setw(4) << iter + 1 << "|" << fixed << setprecision(4) << tau << " | " << setprecision(3) << q
+		fout << setw(4) << iter + 1 << "|" << fixed << setprecision(4) << tau << " | " << setprecision(3) << q
 			<< " |" << setprecision(7) << setw(10) << FirstVectorNorm(r) << " |" << setw(10) << norm_pg << " |" << setw(10) << pg << " | ";
 
 		for (int i = 0; i < b.size(); i++)
 		{
-			cout << setw(8) << fixed << setprecision(5) << X[i];
+			fout << setw(8) << fixed << setprecision(5) << X[i];
 		}
-		cout << endl;
+		fout << endl;
 		iter++;
 
 	} while (FirstVectorNorm(SubtractionVector(X, X_q)) / FirstVectorNorm(X) > epsylon);
@@ -190,9 +200,9 @@ void fast_gardient(vector<vector<double>> A, vector<double> b,vector<double> X_q
 void conjugate_gardient(vector<vector<double>> A, vector<double> b, vector<double> X_q) //ìåòîä ñîïðÿæ¸ííûõ ãðàäèåíòîâ
 {
 
-	cout << "Ìåòîä ñîïðÿæåííûé ãðàäèåòîâ" << endl;
-	cout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12) << "Íîðìà r|"
-		<< setw(12) << "Íîðìà ïîãð|" << setw(12) << "Îöåíêà ïîãð|"
+	fout << "Метод сопряженный градиетов" << endl;
+	fout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12) << "Норма r|"
+		<< setw(12) << "Норма погр|" << setw(12) << "Оценка погр|"
 		<< setw(8) << "X[0]" << setw(8) << "X[1]" << setw(8) << "X[2]" << setw(8) << "X[3]" << endl;
 
 	vector<double> X(A.size()); // X[k]
@@ -230,15 +240,15 @@ void conjugate_gardient(vector<vector<double>> A, vector<double> b, vector<doubl
 		norm_pg = FirstVectorNorm(SubtractionVector(X_now, X_q));
 
 
-		cout << setw(4) << iter + 1 << "|" << fixed << setprecision(4) << tau << " | " << setprecision(3) << q
+		fout << setw(4) << iter + 1 << "|" << fixed << setprecision(4) << tau << " | " << setprecision(3) << q
 			<< " |" << setprecision(7) << setw(10) << FirstVectorNorm(r) << " |" << setw(10) << norm_pg << " |" << setw(10) << pg << " | ";
 
 
 		for (int i = 0; i < b.size(); i++)
 		{
-			cout << setw(8) << fixed << setprecision(5) << X_now[i];
+			fout << setw(8) << fixed << setprecision(5) << X_now[i];
 		}
-		cout << fixed << setprecision(14) << " | " << alpha << endl;
+		fout << fixed << setprecision(14) << " | " << alpha << endl;
 
 
 		alpha_old = alpha;
@@ -266,31 +276,27 @@ void SORNext(vector<vector<double>> a, vector<double> b, double w, vector<double
 	}
 }
 
-double findOptimalW(vector<vector<double>> a, vector<double> b)
+double findOptimalW(vector<vector<double>> a, vector<double> b, vector<double> SolvedX)
 {
-	double eps = 0.01, w, wOpt = 0.1,n;
-	vector<double> nev(4);
+	fout << "Метод ПВР - выбор потимального w" << endl;
+
+	double w, wOpt = 0.1;
 	int itr, minItr = INT_MAX;
 	for(w=0.1;w<2;w+=0.1)
 	{
 		itr = 0;
-		n = 1;
-		vector<double> xCur(4);
+		vector<double> xCur=b;
 		vector<double> xNext(4);
 
-		while(n>eps)
+		while(FirstVectorNorm(SubtractionVector(xCur, SolvedX)) / FirstVectorNorm(xCur) >0.001)
 		{
 			itr++;
 
 			double sum;
 
 			SORNext(a, b, w, xCur, xNext);
-
-			nev = vectorNevyazki(a, xCur, b);
-			n = FirstVectorNorm(nev);
-
-			for (int i = 0; i < b.size(); ++i)
-				xCur[i] = xNext[i];
+			
+			xCur = xNext;
 		}
 
 		if(itr<minItr)
@@ -299,16 +305,17 @@ double findOptimalW(vector<vector<double>> a, vector<double> b)
 			minItr = itr;
 		}
 
-		cout << "w= " << setprecision(2) << w << " Itr= " << itr << endl;
+		fout << "w= " << setprecision(2) << w << " Itr= " << itr << endl;
 	}
 
-	cout << "w* = " << setprecision(4) << wOpt << " ItrMin = " << minItr << endl;
+	fout << "w* = " << setprecision(4) << wOpt << " ItrMin = " << minItr << endl;
 	return wOpt;
 }
 
 void SOR(vector<vector<double>> a, vector<double> b, vector<double> solvedX)
 {
-	double w = findOptimalW(a, b);
+
+	double w = findOptimalW(a, b, solvedX);
 	vector<double> xPrev(4);
 	vector<double> xCur = b;
 	vector<double> xNext(4);
@@ -316,8 +323,13 @@ void SOR(vector<vector<double>> a, vector<double> b, vector<double> solvedX)
 	double nevNorm;
 	double pogrNorm=1;
 
+	fout << "Метод ПВР" << endl;
+	fout << setw(4) << "Iter|" << setw(8) << "tau|" << setw(8) << "q|" << setw(12)
+		<< "Норма r|" << setw(12) << "Норма погр|" << setw(12) << "Оценка погр|"
+		<< setw(8) << "X[0]" << setw(8) << "X[1]" << setw(8) << "X[2]" << setw(8) << "X[3]" << endl;
+
 	double q, pogr=1;
-	for(int itr=1;abs(pogrNorm)-epsylon>0;++itr)
+	for(int itr=1; FirstVectorNorm(SubtractionVector(xCur, solvedX)) / FirstVectorNorm(xCur)>epsylon;++itr)
 	{
 		nev = vectorNevyazki(a, xCur, b);
 		SORNext(a, b, w, xCur, xNext);
@@ -326,7 +338,12 @@ void SOR(vector<vector<double>> a, vector<double> b, vector<double> solvedX)
 		nevNorm = FirstVectorNorm(nev);
 		pogrNorm = FirstVectorNorm(SubtractionVector(xNext, solvedX));
 
-		cout << itr << " | " << setprecision(3) << w <<setprecision(3)<< " | " << q << " | " << setprecision(7) << nevNorm << " | " << pogrNorm<<" | "<<pogr << endl;
+		fout << setw(4) << itr << "|" << fixed << setprecision(4) << w << " | " << setprecision(3) << q
+			<< " |" << setw(10) << setprecision(7) << nevNorm << " |" << setw(10) << pogrNorm << " |" << setw(10) << pogr << " | ";
+
+		for (int i = 0; i < b.size(); ++i)
+			fout << setw(8) << fixed << setprecision(5) << xNext[i];
+		fout << endl;
 
 		xPrev = xCur;
 		xCur = xNext;
@@ -349,36 +366,48 @@ int main()
 
 	fin.close();
 
-	vector<vector<double>> RevA = ReverseMatrix(a);
-	double numberOb = EuclideanNorm(MultMatrix(Transpose(a), a)) * EuclideanNorm(MultMatrix(Transpose(RevA), RevA));
+	fout << "b" << endl;
+	for (int i = 0; i < b.size(); ++i)
+		fout << b[i] << " ";
+	fout << endl;
 
-	cout << log(1 / epsylon) / 2 * numberOb << endl;
-	cout << log(1 / epsylon) / 4 * sqrt(numberOb) << endl;
-	cout << log(2 / epsylon) / 2 * sqrt(numberOb) << endl;
+	fout << "A" << endl;
 
 	for (int i = 0; i < a.size(); ++i)
 	{
 		for (int j = 0; j < a[i].size(); ++j)
-			cout << a[i][j] << " ";
-		cout << endl;
+			fout <<fixed<<setprecision(5)<< a[i][j] << " ";
+		fout << endl;
 	}
-	cout<<endl;
+	fout << endl;
 
-	
+	fout << "Решение прямым методом квадратного корня" << endl;
+	fout << "x*" << endl;
+
 	vector<double> x = sqrtMethod(a, b);
-	simpleIteration(a, b,x);
-	cout << endl;
-	fast_gardient(a, b, x);
-	cout << endl;
-	SOR(a, b, x);
-	cout << endl;
-	conjugate_gardient(a, b,x);
 
 	for (int i = 0; i < x.size(); ++i)
-		cout << x[i] << endl;
+		fout<<fixed <<setprecision(14) <<x[i] << endl;
 
+	vector<vector<double>> RevA = ReverseMatrix(a);
+	double numberOb = EuclideanNorm(MultMatrix(Transpose(a), a)) * EuclideanNorm(MultMatrix(Transpose(RevA), RevA));
+
+	fout << "Норма матрицы = " << fixed<<setprecision(5)<<EuclideanNorm(MultMatrix(Transpose(a),a)) << endl;
+
+	simpleIteration(a, b, x);
+	fout << endl;
+	fast_gardient(a, b, x);
+	fout << endl;
+	SOR(a, b, x);
+	fout << endl;
+	conjugate_gardient(a, b, x);
+
+	fout << "Число обусловленности " <<fixed<<setprecision(3)<<numberOb << endl;
+	fout <<"Метод простой итерации и градиентного спуска " <<fixed<< setprecision(0) << log(1 / epsylon) / 2 * numberOb << endl;
+	fout << "Метод релаксации " <<fixed<< setprecision(0) << log(1 / epsylon) / 4 * sqrt(numberOb) << endl;
+	fout <<"Метод сопряженных градиентов " << fixed<<setprecision(0) << log(2 / epsylon) / 2 * sqrt(numberOb) << endl;
 	
-
+	fout.close();
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
